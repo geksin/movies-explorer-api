@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
 const auth = require('./middlewares/auth');
-const config = require('./config');
+require('dotenv').config();
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const {
@@ -60,7 +60,7 @@ app.use((err, req, res) => {
     });
 });
 
-app.listen(config.server.port, () => {
+app.listen(process.env.PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`Сервер запущен, порт ${config.server.port}`);
+  console.log(`Сервер запущен, порт ${process.env.PORT}`);
 });

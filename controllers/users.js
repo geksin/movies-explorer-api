@@ -92,11 +92,11 @@ module.exports.login = (req, res, next) => {
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        next(new NotFoundError(errorsMessagee['404email']));
+        return next(new NotFoundError(errorsMessagee['404email']));
       }
       bcrypt.compare(password, user.password, (err, isValid) => {
         if (!isValid) {
-          next(new AutorizationError(errorsMessagee[401]));
+          return next(new AutorizationError(errorsMessagee[401]));
         }
 
         const token = jwt.sign({ id: user.id, email }, config.JWT_SECRET, { expiresIn: '7d' });
