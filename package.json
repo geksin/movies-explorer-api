@@ -1,0 +1,38 @@
+{
+  "name": "movies-explorer-api",
+  "version": "1.0.0",
+  "description": "Дипломный проект",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "lint": "npx eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geksin/movies-explorer-api.git"
+  },
+  "author": "Dmitriy Moskovskiy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geksin/movies-explorer-api/issues"
+  },
+  "homepage": "https://github.com/geksin/movies-explorer-api#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "celebrate": "^15.0.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "express": "^4.17.1",
+    "express-winston": "^4.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.13.2",
+    "nodemon": "^2.0.12",
+    "v": "^0.3.0",
+    "validator": "^13.6.0",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.30.0"
+  }
+}
