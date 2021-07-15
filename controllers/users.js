@@ -13,7 +13,6 @@ const errorsMessagee = {
   400: 'Переданы некорректные данные при создании пользователя',
   '400login': 'Не заполнены все поля',
   '400user': 'Переданы некорректные данные при обновлении профиля',
-  '400ava': 'Переданы некорректные данные при обновлении аватара',
   401: 'Логин или пароль не правильные',
   404: 'Пользователь по указанному _id не найден',
   '404email': 'Пользователь с такой почтой не найден',
@@ -37,7 +36,7 @@ module.exports.getMe = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, password, email,
+    name, password, email,
   } = req.body;
   if (!email || !password) {
     next(new RequestError(errorsMessagee[400]));
@@ -48,10 +47,10 @@ module.exports.createUser = (req, res, next) => {
         next(new AlreadyHaveError(errorsMessagee[409]));
       }
       return User.create({
-        name, about, avatar, password: hash, email,
+        name, password: hash, email,
       })
         .then(() => res.status(200).send({
-          name, about, avatar, email,
+          name, email,
         }));
     })
     .catch((error) => {
