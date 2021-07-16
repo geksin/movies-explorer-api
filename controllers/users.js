@@ -7,8 +7,6 @@ const RequestError = require('../errors/RequestError');
 const AutorizationError = require('../errors/AutorizationError');
 const AlreadyHaveError = require('../errors/AlreadyHaveError');
 
-const config = require('../config');
-
 const errorsMessagee = {
   400: 'Переданы некорректные данные при создании пользователя',
   '400login': 'Не заполнены все поля',
@@ -99,7 +97,7 @@ module.exports.login = (req, res, next) => {
           return next(new AutorizationError(errorsMessagee[401]));
         }
 
-        const token = jwt.sign({ id: user.id, email }, config.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: user.id, email }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         return res.status(200).send({ id: user.id, token });
       });
