@@ -1,5 +1,6 @@
 const Movie = require('../models/movie');
 const NotFoundError = require('../errors/NotFoundError');
+const RequestError = require('../errors/RequestError');
 
 const errorsMessagee = {
   400: 'Переданы некорректные данные при создании карточки фильма',
@@ -59,8 +60,12 @@ module.exports.deleteMovies = (req, res, next) => {
       if (movie == null) {
         next(new NotFoundError(errorsMessagee['404del']));
       }
-      Movie.findByIdAndRemove(movie._id)
-        .then((movies) => res.send(movies));
+      if (movie.owner.equals(req.user.id)) {
+        return Movie.findByIdAndRemove(movie._id)
+          .then((movies) => res.send(movies))
+          .catch((err) => next(err));
+      }
+      return next(new RequestError(errorsMessagee['403del']));
     })
     .catch((err) => {
       if (err.name === 'CastError') {

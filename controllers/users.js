@@ -15,6 +15,7 @@ const errorsMessagee = {
   404: 'Пользователь по указанному _id не найден',
   '404email': 'Пользователь с такой почтой не найден',
   409: 'Пользователь c такой почтой уже существует',
+  '409up': 'нельзя обновить данные другого пользователя',
 };
 
 module.exports.getMe = (req, res, next) => {
@@ -71,6 +72,9 @@ module.exports.updateProfile = (req, res, next) => {
     })
     .then((users) => res.send({ users }))
     .catch((err) => {
+      if (err.codeName === 'DuplicateKey' && err.code === 11000) {
+        next(new AlreadyHaveError(errorsMessagee['409up']));
+      }
       if (err.name === 'ValidationError') {
         next(new RequestError(errorsMessagee[400]));
       }
@@ -92,11 +96,10 @@ module.exports.login = (req, res, next) => {
       if (!user) {
         return next(new NotFoundError(errorsMessagee['404email']));
       }
-      bcrypt.compare(password, user.password, (err, isValid) => {
+      return bcrypt.compare(password, user.password, (err, isValid) => {
         if (!isValid) {
           return next(new AutorizationError(errorsMessagee[401]));
         }
-
         const token = jwt.sign({ id: user.id, email }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         return res.status(200).send({ id: user.id, token });
