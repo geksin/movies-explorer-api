@@ -1,10 +1,18 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
 const {
   getMovies, createMovies, deleteMovies,
 } = require('../controllers/movies');
 
 router.get('/', getMovies);
+
+const urlCheck = (value, helper) => {
+  if (validator.isURL(value)) {
+    return value;
+  }
+  return helper.message('Проверьте правильность ссылки');
+};
 
 router.post('/', celebrate({
   body: Joi.object().keys({
@@ -13,9 +21,9 @@ router.post('/', celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().required().regex(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/),
-    trailer: Joi.string().required().regex(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/),
-    thumbnail: Joi.string().required().regex(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/),
+    image: Joi.string().required().custom(urlCheck),
+    trailer: Joi.string().required().custom(urlCheck),
+    thumbnail: Joi.string().required().custom(urlCheck),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),

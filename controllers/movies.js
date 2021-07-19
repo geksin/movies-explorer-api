@@ -49,8 +49,9 @@ module.exports.createMovies = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new NotFoundError(errorsMessagee[400]));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -61,8 +62,7 @@ module.exports.deleteMovies = (req, res, next) => {
         next(new NotFoundError(errorsMessagee['404del']));
       }
       if (movie.owner.equals(req.user.id)) {
-        return Movie.findByIdAndRemove(movie._id)
-          .then((movies) => res.send(movies))
+        return movie.remove().then(() => res.send({ message: movie }))
           .catch((err) => next(err));
       }
       return next(new RequestError(errorsMessagee['403del']));
@@ -70,7 +70,8 @@ module.exports.deleteMovies = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new NotFoundError(errorsMessagee['404del']));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
