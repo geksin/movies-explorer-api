@@ -1,11 +1,13 @@
 const Movie = require('../models/movie');
 const NotFoundError = require('../errors/NotFoundError');
-const RequestError = require('../errors/RequestError');
+const AccessError = require('../errors/AccessError');
+
 
 const errorsMessagee = {
   400: 'Переданы некорректные данные при создании карточки фильма',
   404: 'карточка или пользователь не найден',
   '404del': 'Видео с указанным _id не найдено',
+  403: 'видео может удалить только создатель',
 };
 
 module.exports.getMovies = (req, res, next) => {
@@ -62,10 +64,9 @@ module.exports.deleteMovies = (req, res, next) => {
         next(new NotFoundError(errorsMessagee['404del']));
       }
       if (movie.owner.equals(req.user.id)) {
-        return movie.remove().then(() => res.send({ message: movie }))
-          .catch((err) => next(err));
+        return movie.remove().then(() => res.send({ message: movie }));
       }
-      return next(new RequestError(errorsMessagee['403del']));
+      return next(new AccessError(errorsMessagee[403]));
     })
     .catch((err) => {
       if (err.name === 'CastError') {

@@ -6,6 +6,9 @@ const NotFoundError = require('../errors/NotFoundError');
 const RequestError = require('../errors/RequestError');
 const AutorizationError = require('../errors/AutorizationError');
 const AlreadyHaveError = require('../errors/AlreadyHaveError');
+const AccessError = require('../errors/AccessError');
+
+const { JWT_SECRET = 'jdsg776599' } = process.env;
 
 const errorsMessagee = {
   400: 'Переданы некорректные данные при создании пользователя',
@@ -15,7 +18,7 @@ const errorsMessagee = {
   404: 'Пользователь по указанному _id не найден',
   '404email': 'Пользователь с такой почтой не найден',
   409: 'Пользователь c такой почтой уже существует',
-  '409up': 'нельзя обновить данные другого пользователя',
+  '403up': 'нельзя обновить данные другого пользователя',
 };
 
 module.exports.getMe = (req, res, next) => {
@@ -28,8 +31,9 @@ module.exports.getMe = (req, res, next) => {
       }
       if (err.name === 'CastError') {
         next(new NotFoundError(errorsMessagee[404]));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -37,9 +41,6 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, password, email,
   } = req.body;
-  if (!email || !password) {
-    next(new RequestError(errorsMessagee[400]));
-  }
   return bcrypt.hash(password, 8, (err, hash) => User.findOne({ email })
     .then((user) => {
       if (user) {
@@ -55,11 +56,9 @@ module.exports.createUser = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new RequestError(errorsMessagee[400]));
+      } else {
+        next(error);
       }
-      if (error.name === 'CastError') {
-        next(new NotFoundError(errorsMessagee[404]));
-      }
-      next(error);
     }));
 };
 
@@ -73,15 +72,16 @@ module.exports.updateProfile = (req, res, next) => {
     .then((users) => res.send({ users }))
     .catch((err) => {
       if (err.codeName === 'DuplicateKey' && err.code === 11000) {
-        next(new AlreadyHaveError(errorsMessagee['409up']));
+        next(new AccessError(errorsMessagee['403up']));
       }
       if (err.name === 'ValidationError') {
         next(new RequestError(errorsMessagee[400]));
       }
       if (err.name === 'CastError') {
         next(new NotFoundError(errorsMessagee[404]));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -100,7 +100,7 @@ module.exports.login = (req, res, next) => {
         if (!isValid) {
           return next(new AutorizationError(errorsMessagee[401]));
         }
-        const token = jwt.sign({ id: user.id, email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: user.id, email }, JWT_SECRET, { expiresIn: '7d' });
 
         return res.status(200).send({ id: user.id, token });
       });
