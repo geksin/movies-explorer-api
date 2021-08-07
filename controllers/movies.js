@@ -2,7 +2,6 @@ const Movie = require('../models/movie');
 const NotFoundError = require('../errors/NotFoundError');
 const AccessError = require('../errors/AccessError');
 
-
 const errorsMessagee = {
   400: 'Переданы некорректные данные при создании карточки фильма',
   404: 'карточка или пользователь не найден',

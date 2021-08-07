@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
+const cors = require('cors');
 const limiter = require('./middlewares/limiter');
 require('dotenv').config();
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -9,6 +10,15 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { LINK_DB = 'mongodb://localhost:27017/testmovie' } = process.env;
 
 const app = express();
+app.use(cors({
+  origin: [
+    'https://sxep.nomoredomains.monster',
+    'http://sxep.nomoredomains.monster',
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ],
+  credentials: true,
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
