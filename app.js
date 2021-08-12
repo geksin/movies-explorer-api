@@ -12,8 +12,8 @@ const { LINK_DB = 'mongodb://localhost:27017/testmovie' } = process.env;
 const app = express();
 app.use(cors({
   origin: [
-    'https://sxep.nomoredomains.monster',
-    'http://sxep.nomoredomains.monster',
+    'https://sxep-diplom.nomoredomains.club',
+    'http://sxep-diplom.nomoredomains.club',
     'http://localhost:3000',
     'http://localhost:3001',
   ],
