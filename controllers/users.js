@@ -69,7 +69,7 @@ module.exports.updateProfile = (req, res, next) => {
       runValidators: true,
       upsert: true,
     })
-    .then((users) => res.send({ users }))
+    .then((user) => res.send({ user }))
     .catch((err) => {
       if (err.codeName === 'DuplicateKey' && err.code === 11000) {
         next(new AccessError(errorsMessagee['403up']));
