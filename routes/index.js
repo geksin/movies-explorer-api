@@ -10,7 +10,6 @@ router.use('/movies', auth, require('./movies'));
 
 router.use('*', (req, res, next) => {
   next(new NotFoundError('Некорректный адрес'));
-  // res.redirect('/');
 });
 
 module.exports = router;
