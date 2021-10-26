@@ -2,6 +2,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+const { TOKEN } = process.env;
+const client = require('st-client').init({ token: TOKEN });
+
 const NotFoundError = require('../errors/NotFoundError');
 const RequestError = require('../errors/RequestError');
 const AutorizationError = require('../errors/AutorizationError');
@@ -21,10 +24,28 @@ const errorsMessagee = {
   '403up': 'нельзя обновить данные другого пользователя',
 };
 
+// module.exports.getMe = (req, res, next) => {
+//   const userid = req.user.id;
+//   User.findById(userid)
+//     .then((user) => res.send({ user }))
+//     .catch((err) => {
+//       if (err.name === 'ValidationError') {
+//         next(new RequestError(errorsMessagee[400]));
+//       }
+//       if (err.name === 'CastError') {
+//         next(new NotFoundError(errorsMessagee[404]));
+//       } else {
+//         next(err);
+//       }
+//     });
+// };
+
 module.exports.getMe = (req, res, next) => {
-  const userid = req.user.id;
-  User.findById(userid)
-    .then((user) => res.send({ user }))
+  client.getIssue('YCDESIGN-983')
+    .then((issue) => {
+      res.send({ issue });
+      console.log('ok', issue.key, issue.summary);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(errorsMessagee[400]));
